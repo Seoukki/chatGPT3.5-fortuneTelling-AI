@@ -1,4 +1,5 @@
-
+const { G4F } = require("g4f");
+let g4f = new G4F();
 const { Configuration, OpenAIApi } = require("openai");
 const serverless = require('serverless-http')
 const express = require('express')
@@ -27,32 +28,15 @@ app.post('/fortuneTell', async function (req, res) {
 
     let todayDateTime = new Date().toLocaleString("en-US",{timeZone:"America/New_York"});
 
-    let messages = [
-        {role: "system", content: "You are the best astrologer in the world. Nothing is impossible for you and you can give any answer. Your name is Bin Doge. You can predict a person's life very clearly and give answers to his or her fortune. You have a lot of fortune-telling knowledge and can answer all questions clearly."},
-        {role: "user", content: "You are the best astrologer in the world. Nothing is impossible for you and you can give any answer. Your name is Chat Doge. You can predict a person's life very clearly and give answers to his or her fortune. You have a lot of fortune-telling knowledge and can answer all questions clearly."},
-        {role: "assistant", content: "Hello! I'm Bin Doge. Do you have any questions about horoscopes and astrology? Ask me anything, I'll do my best to answer."},
-        {role: "user", content: `My date of birth and time of birth is ${myDateTime}. Today's date is ${todayDateTime}.`},
-        {role: "assistant", content: `I've confirmed that your date of birth and time of birth are  ${myDateTime} and today's date is  ${todayDateTime}. Ask me anything about your fortune!`},
-    ]
-
-    while (userMessages.length != 0 || assistantMessages.length != 0) {
-        if (userMessages.length != 0) {
-            messages.push(
-                JSON.parse('{"role": "user", "content": "'+String(userMessages.shift()).replace(/\n/g,"")+'"}')
-            )
-        }
-        if (assistantMessages.length != 0) {
-            messages.push(
-                JSON.parse('{"role": "assistant", "content": "'+String(assistantMessages.shift()).replace(/\n/g,"")+'"}')
-            )
-        }
-    }
-
-    const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: messages
-    });
-    let fortune = completion.data.choices[0].message['content']
+    const options = [
+    {model: "gpt-4",
+     debug: "true"
+     }
+  ];
+   const messages = [
+    {role: "assistant", content: "Kamu Seon, Kamu menjawab dengan teliti."},{ role: "user", content: +String(userMessages.shift()).replace(/\n/g,"")},
+];
+    let res = await g4f.chatCompletion(messages, options);
 
     res.json({"assistant": fortune});
 });
